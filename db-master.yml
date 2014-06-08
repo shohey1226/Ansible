@@ -1,0 +1,26 @@
+---
+- hosts: db-master-hosts
+  remote_user: root
+  roles:
+    - mysql 
+  vars:
+    mysql_root_db_pass: root_pass
+    mysql_port: 3306
+    mysql_bind_address: "0.0.0.0"
+    mysql_db_id: 1
+    mysql_repl_role: master
+    mysql_db: 
+      - name: hogehoge 
+        replicate: yes
+    mysql_users:
+      - name: a_user
+        pass: a_user_pass
+        priv: "hogehoge.*:ALL"
+        host: app1
+      - name: a_user2 
+        pass: a_user_pass2 
+        priv: "hogehgoe.*:ALL"
+        host: app2
+    mysql_repl_user:
+      - name: repel_user
+        pass: repel_pass
