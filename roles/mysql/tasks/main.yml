@@ -71,3 +71,9 @@
   mysql_replication: mode=changemaster master_host={{ mysql_repl_master }} master_log_file={{ repl_stat.File }} master_log_pos={{ repl_stat.Position }} master_user={{ mysql_repl_user[0].name }} master_password={{ mysql_repl_user[0].pass }}
   when: slave|failed and mysql_repl_role == 'slave' and mysql_repl_master is defined
 
+
+- name: setup monit
+  copy: src=mysqld.monit dest=/etc/monit.d/mysqld force=yes
+  notify: restart monit
+       
+       

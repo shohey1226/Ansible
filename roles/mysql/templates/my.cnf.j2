@@ -26,8 +26,19 @@ binlog_ignore_db        = {{ i.name }}
 {% endfor %}
 {% endif %}
 
+skip-character-set-client-handshake
+character-set-server = utf8
+default-collation=utf8_general_ci
+default-character-set=utf8
+
 [mysqld_safe]
 log-error=/var/log/mysqld.log
 pid-file=/var/run/mysqld/mysqld.pid
+
+[mysqldump]
+default-character-set = utf8
+
+[mysql]
+default-character-set = utf8
 
 

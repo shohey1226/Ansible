@@ -1,0 +1,4 @@
+check process mysql with pidfile /var/run/fluent-agent-lite.pid
+   start program = "/etc/init.d/fluent-agent-lite start"
+   stop program = "/etc/init.d/fluent-agent-lite stop"
+   if 5 restarts within 5 cycles then timeout

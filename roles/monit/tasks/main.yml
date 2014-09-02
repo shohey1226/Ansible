@@ -1,0 +1,9 @@
+---
+- name: install monit 
+  yum: name=monit state=latest
+- name: copy monit.conf
+  copy: src=monit.conf dest=/etc/monit.conf force=yes
+  notify: 
+   - restart monit
+- name: enable on boot 
+  service: name=monit state=started enabled=yes 

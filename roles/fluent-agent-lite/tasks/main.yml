@@ -1,0 +1,26 @@
+---
+- name: resolve dependency 
+  yum: name=perl-devel state=latest
+
+- name: git clone fluent-agent-lite 
+  shell: (cd /tmp; git clone https://github.com/tagomoris/fluent-agent-lite.git)
+  args: 
+    creates: /etc/fluent-agent-lite.conf 
+
+- name: install fluent-agent-lite
+  shell: /tmp/fluent-agent-lite/bin/install.sh
+  args: 
+    creates: /etc/fluent-agent-lite.conf 
+
+- name: copy fluent-agent-lite.conf 
+  copy: src=fluent-agent-lite.conf dest=/etc/fluent-agent-lite.conf force=yes
+  notify: 
+   - restart fluent-agent-lite
+
+- name: setup monit
+  copy: src=fluent-agent-lite.monit dest=/etc/monit.d/fluent-agent-lite force=yes
+  notify: restart monit
+
+- name: enable on boot 
+  service: name=fluent-agent-lite state=started enabled=yes 
+

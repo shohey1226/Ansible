@@ -1,0 +1,13 @@
+---
+- hosts: sg-nginx-reverseproxy
+  remote_user: root
+  roles:
+    - iptables-rp
+    - bootstrap 
+    - monit
+    - nginx
+  vars:
+    upstream_name: traberry
+    static_path: '/fbcdn/'
+    static_rewrite:
+      - '^/fbcdn/(.*)/(.*) http://$1.fbcdn.net/$2 break'

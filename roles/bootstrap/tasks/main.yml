@@ -1,0 +1,23 @@
+---
+- name: Update all packages 
+  yum: name=* state=latest
+
+- name: install epel 
+  shell: rpm -ivh --force http://ftp.jaist.ac.jp/pub/Linux/Fedora/epel/6/i386/epel-release-6-8.noarch.rpm 
+
+- name: install rpmforge 
+  shell: rpm -ivh --force http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm 
+
+- name: change date to JST 
+  shell: cp /usr/share/zoneinfo/Japan /etc/localtime
+  
+- name: Disallow SSH password authentication
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    regexp="^PasswordAuthentication"
+    line="PasswordAuthentication no"
+    state=present
+  notify:
+    - restart sshd
+
+

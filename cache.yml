@@ -1,0 +1,7 @@
+---
+- hosts: sg-cache
+  remote_user: root
+  roles:
+    - bootstrap
+    - monit
+    - redis 

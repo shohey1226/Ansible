@@ -1,0 +1,11 @@
+---
+- name: create /tmp/iptables.sh
+  template: src=iptables.sh.j2 dest=/tmp/iptables.sh mode=0777
+  notify: 
+   - install iptables 
+  tags:
+    - iptables
+
+# for some reason, the below doesn't work
+#- name: install iptables
+#  command: bash /tmp/iptables.sh 

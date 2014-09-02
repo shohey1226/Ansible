@@ -1,0 +1,21 @@
+---
+- name: install fluentd 
+  shell: sudo curl -L http://toolbelt.treasuredata.com/sh/install-redhat.sh | sh 
+  args: 
+    creates: /etc/td-agent/td-agent.conf 
+
+- name: install fluentd plugin
+  shell: sudo /usr/lib64/fluent/ruby/bin/fluent-gem install fluent-plugin-file-alternative 
+
+- name: copy td-agent.cnf 
+  copy: src=td-agent.conf dest=/etc/td-agent/td-agent.conf force=yes
+  notify: 
+   - restart fluentd 
+
+- name: setup monit
+  copy: src=fluentd.monit dest=/etc/monit.d/fluentd force=yes
+  notify: restart monit
+
+- name: enable on boot 
+  service: name=td-agent state=started enabled=yes 
+

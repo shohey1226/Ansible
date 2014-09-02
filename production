@@ -1,0 +1,31 @@
+# file: production
+
+[security-group:children]
+sg-dbmaster
+sg-dbslave
+sg-cache
+sg-app
+sg-log
+
+[sg-dbmaster]
+X.X.X.X # DigitalOcean private IP
+
+[sg-dbslave]
+X.X.X.X
+
+[sg-cache]
+X.X.X.X
+
+[sg-app]
+X.X.X.X
+X.X.X.Y
+X.X.X.Z
+
+[sg-nginx-reverseproxy]
+X.X.X.X
+
+[sg-log]
+X.X.X.X
+
+[sg-landing]
+X.X.X.X

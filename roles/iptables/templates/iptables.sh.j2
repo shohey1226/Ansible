@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# See this link
+# https://www.digitalocean.com/community/articles/how-to-isolate-servers-within-a-private-network-using-iptables
+
+# stop firewall 
+/etc/rc.d/init.d/iptables stop
+
+iptables -P INPUT ACCEPT
+iptables -P OUTPUT ACCEPT
+iptables -P FORWARD ACCEPT
+iptables -F
+
+{% for i in groups['sg-landing'] %}
+iptables -A INPUT -p tcp -s {{ i }} --dport 22 -i eth1 -j ACCEPT
+{% endfor %}
+
+iptables -A INPUT -i lo -j ACCEPT
+
+iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+{% for k, v in hostvars.iteritems() -%}
+iptables -A INPUT -p tcp -s {{ hostvars[k].ansible_eth1.ipv4.address }} -j ACCEPT
+{% endfor %}
+
+{% for i in groups['sg-nginx-reverseproxy'] %}
+iptables -A INPUT -p tcp -s {{ i }} --dport 8080 -j ACCEPT
+iptables -A OUTPUT -p tcp -d {{ i }} --sport 8080 -j ACCEPT
+iptables -A INPUT -p tcp -s {{ i }} --dport 443 -j ACCEPT
+iptables -A OUTPUT -p tcp -d {{ i }} --sport 443 -j ACCEPT
+{% endfor %}
+
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+
+# Save rule, which is affective after reboot
+/etc/rc.d/init.d/iptables save
+
+# Start iptable 
+/etc/rc.d/init.d/iptables start

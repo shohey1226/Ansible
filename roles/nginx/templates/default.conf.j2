@@ -1,0 +1,46 @@
+upstream {{upstream_name}} {
+    ip_hash;
+    {% for host in groups['sg-app'] %}
+    server {{ host }}:8080;
+    {% endfor %}
+}
+
+server {
+  listen 80;
+  return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443;
+    server_name localhost; 
+    ssl on;
+
+    ssl_certificate_key  /etc/ssl/certs/server.key;
+    ssl_certificate      /etc/ssl/certs/SSL.crt;
+
+    ssl_session_timeout  5m;
+    ssl_protocols  SSLv2 SSLv3 TLSv1;
+    ssl_ciphers  ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+    ssl_prefer_server_ciphers   on;
+
+    location / {
+       proxy_pass http://{{ upstream_name }};
+       proxy_http_version 1.1;
+       proxy_set_header Upgrade $http_upgrade;
+       proxy_set_header Connection "upgrade";
+       proxy_set_header Host $host;
+       proxy_set_header X-Forwarded-HTTPS on;
+       proxy_set_header X-Forwarded-Proto $scheme;
+       proxy_set_header X-Forwarded-Host $http_host;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location {{static_path}} {
+      {% for i in static_rewrite %}
+      rewrite {{i}} ;
+      {% endfor %}
+    }
+
+    access_log /var/log/nginx/ssl_{{ upstream_name }}.log;
+    error_log /var/log/nginx/ssl_{{ upstream_name }}.error.log;
+}

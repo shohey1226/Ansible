@@ -1,0 +1,3 @@
+---
+- name: install iptables
+  command: bash /tmp/iptables.sh

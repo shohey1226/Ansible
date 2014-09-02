@@ -1,0 +1,30 @@
+---
+- name: stop traberry process
+  command: /usr/bin/monit stop traberry
+  tags:
+    - app
+
+- name: obtain source from github
+  git: repo=git@github.com:shohey1226/TraBerry.git 
+       dest=/home/traberry/app version=master accept_hostkey=yes
+       key_file=/home/traberry/.ssh/id_rsa
+  tags:
+    - app
+
+- name: change permission to traberry:traberry
+  shell: chown -R traberry:traberry /home/traberry/app
+  tags:
+    - app
+
+- name: install modules with carton 
+  sudo: yes
+  sudo_user: traberry
+  shell: chdir=/tmp (. ~/.bash_profile; cd /home/traberry/app; carton install)
+  tags:
+    - app
+
+- name: start traberry process
+  command: /usr/bin/monit start traberry
+  tags:
+    - app
+

@@ -1,0 +1,9 @@
+---
+- hosts: sg-app
+  remote_user: root
+  roles:
+    - bootstrap
+    - git
+    - monit
+    - fluent-agent-lite
+    - traberry

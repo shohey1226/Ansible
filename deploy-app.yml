@@ -1,0 +1,6 @@
+---
+- hosts: sg-app
+  serial: 1
+  remote_user: root
+  roles:
+    - deploy-traberry

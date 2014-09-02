@@ -1,0 +1,8 @@
+---
+- hosts: sg-log
+  remote_user: root
+  roles:
+    - bootstrap
+    - git
+    - monit
+    - fluentd 
