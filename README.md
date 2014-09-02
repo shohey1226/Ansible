@@ -1,5 +1,3 @@
-# TraBerry 
-
 ## update /etc/hosts
 
 ```

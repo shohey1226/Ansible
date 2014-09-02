@@ -1,0 +1,30 @@
+---
+- name: stop YOUR_APP process
+  command: /usr/bin/monit stop YOUR_APP
+  tags:
+    - app
+
+- name: obtain source from github
+  git: repo=YOURREPO.git
+       dest=/home/YOUR_APP/app version=master accept_hostkey=yes
+       key_file=/home/YOUR_APP/.ssh/id_rsa
+  tags:
+    - app
+
+- name: change permission to YOUR_APP:YOUR_APP
+  shell: chown -R YOUR_APP:YOUR_APP /home/YOUR_APP/app
+  tags:
+    - app
+
+- name: install modules with carton 
+  sudo: yes
+  sudo_user: YOUR_APP
+  shell: chdir=/tmp (. ~/.bash_profile; cd /home/YOUR_APP/app; carton install)
+  tags:
+    - app
+
+- name: start YOUR_APP process
+  command: /usr/bin/monit start YOUR_APP
+  tags:
+    - app
+

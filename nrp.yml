@@ -7,7 +7,7 @@
     - monit
     - nginx
   vars:
-    upstream_name: traberry
+    upstream_name: YOUR_APP
     static_path: '/fbcdn/'
     static_rewrite:
       - '^/fbcdn/(.*)/(.*) http://$1.fbcdn.net/$2 break'

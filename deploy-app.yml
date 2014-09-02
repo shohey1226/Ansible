@@ -3,4 +3,4 @@
   serial: 1
   remote_user: root
   roles:
-    - deploy-traberry
+    - deploy-YOUR_APP

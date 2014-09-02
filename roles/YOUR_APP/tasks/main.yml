@@ -1,0 +1,52 @@
+---
+- name: create user YOUR_APP
+  user: name=YOUR_APP
+
+- name: create ~/YOUR_APP/.ssh
+  sudo: yes
+  sudo_user: YOUR_APP
+  file: path=/home/YOUR_APP/.ssh state=directory owner=YOUR_APP group=YOUR_APP mode=0700
+
+- name: copy ops key to YOUR_APP
+  copy: src=/home/ops/.ssh/id_rsa dest=/home/YOUR_APP/.ssh/id_rsa owner=YOUR_APP group=YOUR_APP mode=0600
+
+- name: install Mysql package for module
+  yum: name={{item}} state=latest
+  with_items:
+    - gcc
+    - libxml2-devel
+    - mysql-devel
+    - expat-devel
+    - redis
+
+# YOU MAY NEED TO RUN MANUALLY BELOW
+#- name: install perl with perlenv 
+#  sudo: yes
+#  sudo_user: YOUR_APP
+#  script: perlenv.sh
+
+- name : copy monit config for YOUR_APP
+  copy: src=YOUR_APP_monit.conf dest=/etc/monit.d/YOUR_APP.conf
+  notify: 
+   - restart monit
+
+- name: obtain source from github
+  git: repo=YOURREPO.git
+       dest=/home/YOUR_APP/app version=master accept_hostkey=yes
+       key_file=/home/YOUR_APP/.ssh/id_rsa
+  tags:
+    - app
+
+- name: change permission to YOUR_APP:YOUR_APP
+  shell: chown -R YOUR_APP:YOUR_APP /home/YOUR_APP/app
+  tags:
+    - app
+
+- name: install modules with carton 
+  sudo: yes
+  sudo_user: YOUR_APP
+  shell: chdir=/tmp (. ~/.bash_profile; cd /home/YOUR_APP/app; carton install)
+  tags:
+    - app
+
+
